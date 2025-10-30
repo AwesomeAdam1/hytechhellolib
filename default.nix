@@ -1,14 +1,18 @@
-{ stdenv
-, cmake
-}:
+{ stdenv, cmake }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "hellolib";
-  version = "1.0.0";
+  version = "0.1.0";
   src = ./.;
 
   nativeBuildInputs = [ cmake ];
 
-  # CMakeLists already installs headers and package config
-  # No extra phases needed; standard cmake hooks will run.
+  cmakeFlags = [ ];
+
+  installPhase = ''
+    mkdir -p $out/include
+    mkdir -p $out/lib
+    cp -r include/* $out/include/
+    cp libhellolib.a $out/lib/
+  '';
 }

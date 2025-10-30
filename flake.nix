@@ -1,5 +1,5 @@
 {
-  description = "Hosted hellolib flake";
+  description = "Hosted hellolib with overlay";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
@@ -10,12 +10,16 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-      in
-      {
-        packages.default = pkgs.callPackage ./default.nix { };
+        libPkg = pkgs.callPackage ./default.nix { };
+      in {
+        packages.default = libPkg;
 
         overlays.default = final: prev: {
-          hellolib = final.callPackage ./default.nix { };
+          hellolib = prev.callPackage ./default.nix { };
+        };
+
+        devShells.default = pkgs.mkShell {
+          packages = [ pkgs.cmake ];
         };
       });
 }
